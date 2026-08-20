@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2 } from "lucide-react";
 
 // Cuando la app esté en línea, cambia esto por la URL real de tu backend
-const API_URL = "http://localhost:3000";
+const API_URL = "https://inscripcion-natacion-production.up.railway.app";
 
 const CATEGORIAS = [
   { id: "AD", label: "Adultos", detalle: "15 años y más · incluye tercera edad" },
