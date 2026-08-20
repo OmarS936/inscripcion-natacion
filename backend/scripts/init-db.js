@@ -4,7 +4,7 @@ const { DatabaseSync } = require('node:sqlite');
 const fs = require('fs');
 const path = require('path');
 
-const schemaPath = path.join(__dirname, '..', '..', 'schema.sql');
+const schemaPath = path.join(__dirname, '..', 'schema.sql');
 const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'inscripcion_natacion.db');
 
 const sql = fs.readFileSync(schemaPath, 'utf8');
