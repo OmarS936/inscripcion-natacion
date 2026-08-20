@@ -6,7 +6,10 @@ const app = express();
 // la IP de cada visitante cuando la app está detrás del proxy de Railway
 app.set('trust proxy', 1);
 
-app.use(cors());
+// Solo el frontend real puede llamar esta API
+app.use(cors({
+  origin: 'https://inscripcion-natacion.vercel.app',
+}));
 app.use(express.json());
 
 app.use('/horarios', require('./routes/horarios'));
