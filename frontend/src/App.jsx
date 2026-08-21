@@ -399,7 +399,7 @@ export default function App() {
                 maxLength={18}
                 className={`w-full rounded-xl border px-4 py-3 text-sm uppercase tracking-wide focus:outline-none ${errorCurp ? "border-red-400 bg-red-50" : "border-stone-200 bg-white focus:border-emerald-700"}`}
               />
-              <p className="text-xs text-stone-500 mt-1">Se usa para generar tu folio y evitar registros duplicados.</p>
+              <p className="text-xs text-stone-500 mt-1">Escribe la CURP del alumno que se va a inscribir, se usa para generar tu folio y evitar registros duplicados.</p>
               {errorCurp && <p className="text-xs text-red-600 mt-1 font-medium">{errorCurp}</p>}
             </div>
 
@@ -479,7 +479,7 @@ export default function App() {
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
-            <p className="text-sm text-stone-600 mb-1">Guarda estos datos, los necesitarás el día de tu cita.</p>
+            <p className="text-sm text-stone-600 mb-1">Guarde(tome una captura de pantalla) de estos datos, los necesitará el día de su cita. Deberá llegar 15 minutos previos a la hora de tu cita para sacar tu certificado médico; si ya lo tramitó solo 5 minutos previos</p>
             <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">
