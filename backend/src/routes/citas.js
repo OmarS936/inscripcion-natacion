@@ -1,9 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
+const { FECHAS_CITA_PERMITIDAS, esDiaDeCitaPermitido } = require('../config');
+
+// Devuelve las fechas de cita configuradas que todavía no han pasado
+router.get('/fechas', (req, res) => {
+  const hoy = new Date().toISOString().slice(0, 10);
+  const fechasFuturas = FECHAS_CITA_PERMITIDAS.filter((f) => f >= hoy).sort();
+  res.json(fechasFuturas);
+});
 
 router.get('/disponibilidad', (req, res) => {
   const { fecha } = req.query;
+
+  if (!fecha || !esDiaDeCitaPermitido(fecha)) {
+    return res.json([]);
+  }
+
   const stmt = db.prepare(`
     SELECT
       cc.id, cc.hora_inicio, cc.cupo_maximo,

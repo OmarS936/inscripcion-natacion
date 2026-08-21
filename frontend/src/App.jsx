@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2 } from "lucide-react";
 
-// Cuando la app esté en línea, cambia esto por la URL real de tu backend
+// URL del backend ya desplegado en Railway
 const API_URL = "https://inscripcion-natacion-production.up.railway.app";
+//const API_URL = "http://localhost:3000";
 
 const CATEGORIAS = [
   { id: "AD", label: "Adultos", detalle: "15 años y más · incluye tercera edad" },
@@ -33,18 +34,10 @@ function precioPorDias(n) {
   return PRECIO_MENSUALIDAD[Math.min(n, 7)];
 }
 
-function generarProximosDias(cantidad) {
-  const dias = [];
-  const hoy = new Date();
-  let cursor = new Date(hoy);
-  cursor.setDate(cursor.getDate() + 1); // desde mañana
-  while (dias.length < cantidad) {
-    const fecha = cursor.toISOString().slice(0, 10);
-    const label = cursor.toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" });
-    dias.push({ fecha, label });
-    cursor.setDate(cursor.getDate() + 1);
-  }
-  return dias;
+function formatearFechaLabel(fechaStr) {
+  const [anio, mes, dia] = fechaStr.split("-").map(Number);
+  const fecha = new Date(anio, mes - 1, dia);
+  return fecha.toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" });
 }
 
 export default function App() {
@@ -61,8 +54,9 @@ export default function App() {
   const [diasSel, setDiasSel] = useState([]); // ids de cupo_horario elegidos en esa hora
 
   // --- cita ---
-  const diasCita = useMemo(() => generarProximosDias(5), []);
-  const [diaCitaSel, setDiaCitaSel] = useState(diasCita[0].fecha);
+  const [diasCita, setDiasCita] = useState([]);
+  const [cargandoDias, setCargandoDias] = useState(true);
+  const [diaCitaSel, setDiaCitaSel] = useState(null);
   const [citasApi, setCitasApi] = useState([]);
   const [cargandoCitas, setCargandoCitas] = useState(false);
   const [horaCitaSel, setHoraCitaSel] = useState(null);
@@ -87,9 +81,23 @@ export default function App() {
       .finally(() => setCargandoHorarios(false));
   }, [categoria]);
 
+  // Cargar las fechas de cita configuradas (una vez, no depende de nada más)
+  useEffect(() => {
+    setCargandoDias(true);
+    fetch(`${API_URL}/citas/fechas`)
+      .then((r) => r.json())
+      .then((fechas) => {
+        const conLabel = fechas.map((f) => ({ fecha: f, label: formatearFechaLabel(f) }));
+        setDiasCita(conLabel);
+        if (conLabel.length > 0) setDiaCitaSel(conLabel[0].fecha);
+      })
+      .catch(() => setDiasCita([]))
+      .finally(() => setCargandoDias(false));
+  }, []);
+
   // Cargar disponibilidad de citas cuando cambia el día elegido (paso 2)
   useEffect(() => {
-    if (paso !== 2) return;
+    if (paso !== 2 || !diaCitaSel) return;
     setCargandoCitas(true);
     fetch(`${API_URL}/citas/disponibilidad?fecha=${diaCitaSel}`)
       .then((r) => r.json())
@@ -400,15 +408,25 @@ export default function App() {
                 <CalendarDays size={16} className="text-emerald-700" /> Elige un día
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
-                {diasCita.map((d) => (
-                  <button
-                    key={d.fecha}
-                    onClick={() => { setDiaCitaSel(d.fecha); setHoraCitaSel(null); }}
-                    className={`shrink-0 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${diaCitaSel === d.fecha ? "border-emerald-700 bg-emerald-50 text-emerald-700" : "border-stone-200 bg-white hover:border-emerald-400"}`}
-                  >
-                    {d.label}
-                  </button>
-                ))}
+                {cargandoDias ? (
+                  <div className="flex items-center gap-2 text-sm text-stone-500 py-2">
+                    <Loader2 size={16} className="animate-spin" /> Cargando fechas...
+                  </div>
+                ) : diasCita.length === 0 ? (
+                  <p className="text-sm text-stone-500 py-2">
+                    Por ahora no hay fechas de cita disponibles. Vuelve a intentarlo más tarde.
+                  </p>
+                ) : (
+                  diasCita.map((d) => (
+                    <button
+                      key={d.fecha}
+                      onClick={() => { setDiaCitaSel(d.fecha); setHoraCitaSel(null); }}
+                      className={`shrink-0 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${diaCitaSel === d.fecha ? "border-emerald-700 bg-emerald-50 text-emerald-700" : "border-stone-200 bg-white hover:border-emerald-400"}`}
+                    >
+                      {d.label}
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 

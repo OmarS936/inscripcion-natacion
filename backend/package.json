@@ -4,7 +4,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "init-db": "node scripts/init-db.js"
+    "init-db": "node scripts/init-db.js",
+    "actualizar-cupo": "node scripts/actualizar-cupo.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

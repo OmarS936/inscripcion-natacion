@@ -6,9 +6,15 @@ const app = express();
 // la IP de cada visitante cuando la app está detrás del proxy de Railway
 app.set('trust proxy', 1);
 
-// Solo el frontend real puede llamar esta API
+// Orígenes permitidos: el frontend real en producción, y tu entorno local
+// de pruebas (Vite corre por default en el puerto 5173)
+const ORIGENES_PERMITIDOS = [
+  'https://inscripcion-natacion.vercel.app',
+  'http://localhost:5173',
+];
+
 app.use(cors({
-  origin: 'https://inscripcion-natacion.vercel.app',
+  origin: ORIGENES_PERMITIDOS,
 }));
 app.use(express.json());
 

@@ -2,6 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const db = require('../db/db');
+const { esDiaDeCitaPermitido } = require('../config');
 
 // Patrón oficial de la CURP: 4 letras, 6 dígitos de fecha, sexo (H/M),
 // 2 letras de entidad, 3 consonantes, 1 alfanumérico diferenciador, 1 dígito verificador
@@ -46,6 +47,10 @@ router.post('/', limitarIntentos, (req, res) => {
   const curpNormalizada = curp.trim().toUpperCase();
   if (!CURP_REGEX.test(curpNormalizada)) {
     return res.status(400).json({ error: 'La CURP no tiene un formato válido' });
+  }
+
+  if (!esDiaDeCitaPermitido(fecha)) {
+    return res.status(400).json({ error: 'Esa fecha no tiene citas disponibles' });
   }
 
   try {
