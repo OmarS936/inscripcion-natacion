@@ -350,8 +350,8 @@ export default function App() {
             <div className="flex items-start gap-2 mt-4 text-xs text-stone-500">
               <Info size={14} className="mt-0.5 shrink-0" />
               <span>
-                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción,
-                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos).
+                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción y $400 para Pensionado, Jubilado o Adulto Mayor,
+                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos con tarjeta de crédito o débito).
               </span>
             </div>
 
