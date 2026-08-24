@@ -480,7 +480,7 @@ export default function App() {
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
-            <p className="text-sm text-stone-600 mb-1">Guarda estos datos, los necesitarás el día de tu cita.</p>
+            <p className="text-sm text-stone-600 mb-1">Guarde estos datos(puede tomar una captura de pantalla), los necesitará el día de su cita además de la documentación correspondiente.</p>
             <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">
