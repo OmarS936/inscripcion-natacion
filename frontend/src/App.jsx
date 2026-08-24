@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2 } from "lucide-react";
 
 // TEMPORAL para pruebas locales — antes de subir a producción, regresa esto a la URL de Railway
-const API_URL = "https://inscripcion-natacion.vercel.app/";
+const API_URL = "https://inscripcion-natacion-production.up.railway.app";
 //const API_URL = "http://localhost:3000";
 
 const CATEGORIAS = [
