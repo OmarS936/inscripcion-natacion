@@ -226,7 +226,7 @@ export default function App() {
               <h1 className="text-2xl font-bold">Natación</h1>
             </div>
             <p className="text-sm text-stone-600 mb-5">
-              Elige tu categoría, tu horario y los días. Puedes agregar hasta {MAX_HORARIOS} horarios distintos.
+              Eliga correctamente su categoría, horario y los días. Puede agregar hasta {MAX_HORARIOS} horarios distintos.
             </p>
 
             {bloques.length > 0 && (
@@ -351,8 +351,8 @@ export default function App() {
             <div className="flex items-start gap-2 mt-4 text-xs text-stone-500">
               <Info size={14} className="mt-0.5 shrink-0" />
               <span>
-                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción,
-                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos).
+                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción y $400 para Pensionado, Jubilado, Adulto Mayor(trer documento que lo avale)
+                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos con tarjeta de crédito o débito).
               </span>
             </div>
 
@@ -373,8 +373,8 @@ export default function App() {
               <ArrowLeft size={14} /> Cambiar horarios o días
             </button>
 
-            <h1 className="text-2xl font-bold mb-1">Agenda tu cita de atención</h1>
-            <p className="text-sm text-stone-600 mb-6">Elige el día y la hora en que asistirás a la captura de tus datos.</p>
+            <h1 className="text-2xl font-bold mb-1">Agende su cita de atención</h1>
+            <p className="text-sm text-stone-600 mb-6">Eliga el día y la hora en que asistirá a la captura de sus datos.</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-4 mb-5 space-y-2">
               <p className="text-xs text-stone-500">Plan seleccionado</p>
@@ -400,13 +400,13 @@ export default function App() {
                 maxLength={18}
                 className={`w-full rounded-xl border px-4 py-3 text-sm uppercase tracking-wide focus:outline-none ${errorCurp ? "border-red-400 bg-red-50" : "border-stone-200 bg-white focus:border-emerald-700"}`}
               />
-              <p className="text-xs text-stone-500 mt-1">Se usa para generar tu folio y evitar registros duplicados.</p>
+              <p className="text-xs text-stone-500 mt-1">Escriba la CURP del alumno que se inscribirá, se usará para generar su folio de inscripción.</p>
               {errorCurp && <p className="text-xs text-red-600 mt-1 font-medium">{errorCurp}</p>}
             </div>
 
             <div className="mb-5">
               <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                <CalendarDays size={16} className="text-emerald-700" /> Elige un día
+                <CalendarDays size={16} className="text-emerald-700" /> Eliga un día
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {cargandoDias ? (
@@ -415,7 +415,7 @@ export default function App() {
                   </div>
                 ) : diasCita.length === 0 ? (
                   <p className="text-sm text-stone-500 py-2">
-                    Por ahora no hay fechas de cita disponibles. Vuelve a intentarlo más tarde.
+                    Por ahora no hay fechas de cita disponibles. Vuelva a intentarlo más tarde.
                   </p>
                 ) : (
                   diasCita.map((d) => (
