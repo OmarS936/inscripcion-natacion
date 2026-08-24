@@ -226,7 +226,7 @@ export default function App() {
               <h1 className="text-2xl font-bold">Natación</h1>
             </div>
             <p className="text-sm text-stone-600 mb-5">
-              Eliga correctamente su categoría, horario y los días. Puede agregar hasta {MAX_HORARIOS} horarios distintos.
+              Elija correctamente su categoría, horario y los días. Puede agregar hasta {MAX_HORARIOS} horarios distintos.
             </p>
 
             {bloques.length > 0 && (
@@ -263,7 +263,7 @@ export default function App() {
                 </div>
 
                 <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                  <Clock size={16} className="text-emerald-700" /> Elige un horario
+                  <Clock size={16} className="text-emerald-700" /> Elija un horario
                 </p>
 
                 {cargandoHorarios && (
@@ -301,7 +301,7 @@ export default function App() {
             ) : (
               <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 mb-2">
                 <Info size={16} className="mt-0.5 shrink-0" />
-                <span>Llegaste al máximo de {MAX_HORARIOS} horarios distintos por alumno.</span>
+                <span>Llegó al máximo de {MAX_HORARIOS} horarios distintos por alumno.</span>
               </div>
             )}
 
@@ -351,7 +351,7 @@ export default function App() {
             <div className="flex items-start gap-2 mt-4 text-xs text-stone-500">
               <Info size={14} className="mt-0.5 shrink-0" />
               <span>
-                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción y $400 para Pensionado, Jubilado, Adulto Mayor(trer documento que lo avale)
+                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción y $400 para Pensionado, Jubilado, Adulto Mayor(trer documento que lo avale),
                 {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos con tarjeta de crédito o débito).
               </span>
             </div>
@@ -406,7 +406,7 @@ export default function App() {
 
             <div className="mb-5">
               <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                <CalendarDays size={16} className="text-emerald-700" /> Eliga un día
+                <CalendarDays size={16} className="text-emerald-700" /> Elija un día
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {cargandoDias ? (
@@ -495,7 +495,7 @@ export default function App() {
                 ))}
               </div>
               <div>
-                <p className="text-xs text-stone-500">Mensualidad total</p>
+                <p className="text-xs text-stone-500">Mensualidad total(no incluye costo de Inscripción y Atención Médica)</p>
                 <p className="font-semibold">{money(totalMensualidad)} / mes</p>
               </div>
               <div className="h-px bg-stone-100" />
