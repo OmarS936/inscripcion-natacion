@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2 } from "lucide-react";
 
-// URL del backend ya desplegado en Railway
-const API_URL = "https://inscripcion-natacion-production.up.railway.app";
-//const API_URL = "http://localhost:3000";
+// TEMPORAL para pruebas locales — antes de subir a producción, regresa esto a la URL de Railway
+const API_URL = "http://localhost:3000";
 
 const CATEGORIAS = [
   { id: "AD", label: "Adultos", detalle: "15 años y más · incluye tercera edad" },
@@ -45,6 +44,7 @@ export default function App() {
 
   // --- horarios de actividad ---
   const [categoria, setCategoria] = useState("AD");
+  const [refrescoHorarios, setRefrescoHorarios] = useState(0);
   const [horariosApi, setHorariosApi] = useState([]);
   const [cargandoHorarios, setCargandoHorarios] = useState(false);
   const [errorHorarios, setErrorHorarios] = useState(null);
@@ -79,7 +79,7 @@ export default function App() {
       .then((data) => setHorariosApi(data))
       .catch((err) => setErrorHorarios(err.message))
       .finally(() => setCargandoHorarios(false));
-  }, [categoria]);
+  }, [categoria, refrescoHorarios]);
 
   // Cargar las fechas de cita configuradas (una vez, no depende de nada más)
   useEffect(() => {
@@ -350,8 +350,8 @@ export default function App() {
             <div className="flex items-start gap-2 mt-4 text-xs text-stone-500">
               <Info size={14} className="mt-0.5 shrink-0" />
               <span>
-                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción y $400 para Pensionado, Jubilado o Adulto Mayor,
-                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos con tarjeta de crédito o débito).
+                Además de la mensualidad, la inscripción incluye {money(PRECIO_INSCRIPCION)} de inscripción,
+                {" "}{money(PRECIO_ATENCION_MEDICA)} de atención médica y {money(PRECIO_CERTIFICADO)} de certificado médico (pagos únicos).
               </span>
             </div>
 
@@ -399,7 +399,7 @@ export default function App() {
                 maxLength={18}
                 className={`w-full rounded-xl border px-4 py-3 text-sm uppercase tracking-wide focus:outline-none ${errorCurp ? "border-red-400 bg-red-50" : "border-stone-200 bg-white focus:border-emerald-700"}`}
               />
-              <p className="text-xs text-stone-500 mt-1">Escribe la CURP del alumno que se va a inscribir, se usará para generar tu folio de inscripción.</p>
+              <p className="text-xs text-stone-500 mt-1">Se usa para generar tu folio y evitar registros duplicados.</p>
               {errorCurp && <p className="text-xs text-red-600 mt-1 font-medium">{errorCurp}</p>}
             </div>
 
@@ -479,7 +479,7 @@ export default function App() {
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
-            <p className="text-sm text-stone-600 mb-1">Guarde(tome una captura de pantalla) de estos datos, los necesitará el día de su cita. Deberá llegar 15 minutos previos a la hora de su cita para sacar su certificado médico; si ya lo tramitó solo 5 minutos antes.</p>
+            <p className="text-sm text-stone-600 mb-1">Guarda estos datos, los necesitarás el día de tu cita.</p>
             <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">
@@ -510,6 +510,7 @@ export default function App() {
               onClick={() => {
                 setPaso(1); setBloques([]); setFilaSel(null); setDiasSel([]);
                 setHoraCitaSel(null); setCurp(""); setFolio(null); setErrorCurp(null);
+                setRefrescoHorarios((n) => n + 1); // trae el cupo actualizado, sin recargar la página
               }}
               className="mt-6 text-sm text-emerald-700 font-semibold underline underline-offset-2"
             >
