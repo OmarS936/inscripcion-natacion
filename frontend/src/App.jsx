@@ -15,7 +15,7 @@ const DIA_LABEL = {
   viernes: "Vie", sabado: "Sáb", domingo: "Dom",
 };
 
-const PRECIO_INSCRIPCION = 600;
+const PRECIO_INSCRIPCION = 600;     
 const PRECIO_ATENCION_MEDICA = 220;
 const PRECIO_CERTIFICADO = 100;
 const PRECIO_MENSUALIDAD = { 1: 220, 2: 363, 3: 564, 4: 706, 5: 823, 6: 965, 7: 1094 };
