@@ -268,7 +268,7 @@ export default function App() {
             El periodo de inscripción terminó.
           </p>
           <p className="text-xs text-stone-500">
-            Gracias por tu interés. Consulta en las redes sociales del deportivo la próxima fecha de apertura.
+            Gracias por tu interés. Consulta en las redes sociales del Centro Acuático la próxima fecha de apertura.
           </p>
         </div>
       </div>
