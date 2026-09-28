@@ -4,7 +4,8 @@
 // dentro de la ventana de inscripción). Agrega aquí las próximas fechas conforme
 // se vayan definiendo — formato 'YYYY-MM-DD'.
 const FECHAS_CITA_PERMITIDAS = [
-   '2026-09-28',
+   //'2026-09-28',
+   '2026-09-29',
    //'2026-08-25',
 ];
 
