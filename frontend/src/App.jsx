@@ -34,6 +34,24 @@ function precioPorDias(n) {
   return PRECIO_MENSUALIDAD[Math.min(n, 7)];
 }
 
+function formatearFechaHora(iso) {
+  return new Date(iso).toLocaleString("es-MX", {
+    timeZone: "America/Mexico_City",
+    weekday: "long", day: "numeric", month: "long",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  });
+}
+
+function formatearRestante(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const dos = (n) => String(n).padStart(2, "0");
+  return (d > 0 ? `${d} d ` : "") + `${dos(h)}:${dos(m)}:${dos(s)}`;
+}
+
 function formatearFechaLabel(fechaStr) {
   const [anio, mes, dia] = fechaStr.split("-").map(Number);
   const fecha = new Date(anio, mes - 1, dia);
@@ -67,6 +85,48 @@ export default function App() {
   const [errorCurp, setErrorCurp] = useState(null);
   const [enviando, setEnviando] = useState(false);
   const [folio, setFolio] = useState(null);
+
+  // --- apertura programada de inscripciones ---
+  const [estado, setEstado] = useState(null); // { abierto, apertura, ahora }
+  const [desfaseMs, setDesfaseMs] = useState(0); // reloj del servidor menos reloj de este dispositivo
+  const [restanteMs, setRestanteMs] = useState(0);
+
+  const cargarEstado = () =>
+    fetch(`${API_URL}/estado`)
+      .then((r) => r.json())
+      .then((e) => {
+        setDesfaseMs(new Date(e.ahora).getTime() - Date.now());
+        setEstado(e);
+      })
+      .catch(() => {}); // si falla, se muestra la app normal; el servidor igual valida
+
+  useEffect(() => { cargarEstado(); }, []);
+
+  // Si hay hora de cierre, vuelve a consultar justo al llegar: la página pasa sola a "cerradas"
+  useEffect(() => {
+    if (!estado || estado.estado !== 'abierto' || !estado.cierre) return;
+    const faltan = new Date(estado.cierre).getTime() - (Date.now() + desfaseMs);
+    const espera = Math.min(Math.max(faltan, 0) + 500, 2147483647); // tope de setTimeout (~24 días)
+    const t = setTimeout(cargarEstado, espera);
+    return () => clearTimeout(t);
+  }, [estado, desfaseMs]);
+
+  // Cuenta regresiva: al llegar a cero vuelve a consultar y abre sola, sin recargar
+  useEffect(() => {
+    if (!estado || estado.estado !== 'antes') return;
+    const meta = new Date(estado.apertura).getTime();
+    const tick = () => {
+      const faltan = meta - (Date.now() + desfaseMs);
+      setRestanteMs(faltan);
+      if (faltan <= 0) {
+        clearInterval(reloj);
+        cargarEstado().then(() => setRefrescoHorarios((n) => n + 1));
+      }
+    };
+    const reloj = setInterval(tick, 1000);
+    tick();
+    return () => clearInterval(reloj);
+  }, [estado, desfaseMs]);
 
   // Cargar horarios cuando cambia la categoría
   useEffect(() => {
@@ -196,6 +256,48 @@ export default function App() {
     }
   };
 
+  if (estado && estado.estado === 'cerrado') {
+    return (
+      <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
+        <div className="w-full max-w-xl text-center pt-10">
+          <div className="w-14 h-14 rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mx-auto mb-5">
+            <Clock size={26} />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Las inscripciones ya cerraron</h1>
+          <p className="text-sm text-stone-600 mb-2">
+            El periodo de inscripción terminó el {formatearFechaHora(estado.cierre)} (hora de la Ciudad de México).
+          </p>
+          <p className="text-xs text-stone-500">
+            Gracias por tu interés. Consulta en el deportivo la próxima fecha de apertura.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (estado && estado.estado === 'antes') {
+    return (
+      <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
+        <div className="w-full max-w-xl text-center pt-10">
+          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-5">
+            <Clock size={26} />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Las inscripciones aún no están abiertas</h1>
+          <p className="text-sm text-stone-600 mb-6">
+            Se abrirán el {formatearFechaHora(estado.apertura)} (hora de la Ciudad de México).
+          </p>
+          <div className="rounded-2xl border border-stone-200 bg-white p-5">
+            <p className="text-xs text-stone-500 mb-1">Faltan</p>
+            <p className="text-3xl font-bold text-emerald-700 tracking-wide">{formatearRestante(restanteMs)}</p>
+          </div>
+          <p className="text-xs text-stone-500 mt-4">
+            No necesitas recargar la página: se abrirá sola cuando llegue la hora.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
       <div className="w-full max-w-xl">
@@ -215,6 +317,12 @@ export default function App() {
             <span className={paso === 3 ? "text-emerald-700 font-semibold" : ""}>3. Confirmación</span>
           </div>
         </div>
+
+        {estado && estado.estado === 'abierto' && estado.cierre && (
+          <p className="text-xs text-stone-500 mb-5 -mt-4">
+            Las inscripciones cierran el {formatearFechaHora(estado.cierre)}.
+          </p>
+        )}
 
         {/* PASO 1 */}
         {paso === 1 && (
@@ -374,7 +482,7 @@ export default function App() {
             </button>
 
             <h1 className="text-2xl font-bold mb-1">Agende su cita de atención</h1>
-            <p className="text-sm text-stone-600 mb-6">Eliga el día y la hora en que asistirá a la captura de sus datos.</p>
+            <p className="text-sm text-stone-600 mb-6">Elija el día y la hora en que asistirá a la captura de sus datos.</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-4 mb-5 space-y-2">
               <p className="text-xs text-stone-500">Plan seleccionado</p>
@@ -480,7 +588,7 @@ export default function App() {
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
-            <p className="text-sm text-stone-600 mb-1">Guarde estos datos(puede tomar una captura de pantalla), los necesitará el día de su cita además de la documentación correspondiente y llegar 15 minutos previos a su cita para sacar su certificado médico</p>
+            <p className="text-sm text-stone-600 mb-1">Guarde estos datos (puede tomar una captura de pantalla), los necesitará el día de su cita además de la documentación correspondiente y llegar 15 minutos previos a su cita para sacar su certificado médico</p>
             <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">

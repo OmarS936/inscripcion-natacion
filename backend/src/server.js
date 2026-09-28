@@ -18,6 +18,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
+app.use('/estado', require('./routes/estado'));
 app.use('/horarios', require('./routes/horarios'));
 app.use('/registros', require('./routes/registros'));
 app.use('/citas', require('./routes/citas'));

@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
+const { inscripcionesAbiertas } = require('../config');
 
 router.get('/', (req, res) => {
+  // Fuera de la ventana (antes de abrir o después de cerrar) no se publica ningún cupo
+  if (!inscripcionesAbiertas()) return res.json([]);
+
   const { categoria } = req.query;
   const stmt = db.prepare(`
     SELECT

@@ -2,7 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const db = require('../db/db');
-const { esDiaDeCitaPermitido } = require('../config');
+const { esDiaDeCitaPermitido, estadoInscripciones } = require('../config');
 
 // Patrón oficial de la CURP: 4 letras, 6 dígitos de fecha, sexo (H/M),
 // 2 letras de entidad, 3 consonantes, 1 alfanumérico diferenciador, 1 dígito verificador
@@ -38,6 +38,14 @@ function generarFolio(curp) {
 // Crea el registro (folio + horarios) Y la cita en una sola operación atómica:
 // si cualquier parte falla, no queda nada a medias (ni folio huérfano sin cita).
 router.post('/', limitarIntentos, (req, res) => {
+  // Aunque alguien se salte el frontend, el servidor no registra fuera de la ventana
+  const estadoInsc = estadoInscripciones();
+  if (estadoInsc !== 'abierto') {
+    return res.status(403).json({
+      error: estadoInsc === 'antes' ? 'Las inscripciones aún no están abiertas' : 'Las inscripciones ya cerraron',
+    });
+  }
+
   const { curp, horarios, mensualidad_total, fecha, cupo_cita_id } = req.body;
 
   if (!curp || !horarios || horarios.length === 0 || !fecha || !cupo_cita_id) {
