@@ -265,10 +265,10 @@ export default function App() {
           </div>
           <h1 className="text-2xl font-bold mb-2">Las inscripciones ya cerraron</h1>
           <p className="text-sm text-stone-600 mb-2">
-            El periodo de inscripción terminó el {formatearFechaHora(estado.cierre)} (hora de la Ciudad de México).
+            El periodo de inscripción terminó.
           </p>
           <p className="text-xs text-stone-500">
-            Gracias por tu interés. Consulta en el deportivo la próxima fecha de apertura.
+            Gracias por tu interés. Consulta en las redes sociales del deportivo la próxima fecha de apertura.
           </p>
         </div>
       </div>
