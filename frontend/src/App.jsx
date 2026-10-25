@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2 } from "lucide-react";
+import { Waves, Check, Clock, CalendarDays, ArrowLeft, Info, Plus, X, Loader2, Users } from "lucide-react";
 
 // TEMPORAL para pruebas locales — antes de subir a producción, regresa esto a la URL de Railway
 const API_URL = "https://inscripcion-natacion-production.up.railway.app";
@@ -102,6 +102,14 @@ export default function App() {
 
   useEffect(() => { cargarEstado(); }, []);
 
+  // Mientras está abierto, vuelve a preguntar cada rato: así detecta solo si
+  // se agotó el cupo de horarios o de citas, sin que la persona recargue.
+  useEffect(() => {
+    if (!estado || estado.estado !== 'abierto') return;
+    const t = setInterval(cargarEstado, 20000);
+    return () => clearInterval(t);
+  }, [estado]);
+
   // Si hay hora de cierre, vuelve a consultar justo al llegar: la página pasa sola a "cerradas"
   useEffect(() => {
     if (!estado || estado.estado !== 'abierto' || !estado.cierre) return;
@@ -127,6 +135,48 @@ export default function App() {
     tick();
     return () => clearInterval(reloj);
   }, [estado, desfaseMs]);
+
+  // --- sala de espera ---
+  const [cola, setCola] = useState(null); // { ticket, posicion, personasAdelante, tuTurno, salaEsperaActiva }
+
+  // Al abrir las inscripciones, toma un turno (o recupera el que ya tenía este dispositivo)
+  useEffect(() => {
+    if (!estado || estado.estado !== 'abierto' || cola) return;
+    const ticketGuardado = localStorage.getItem('cola_ticket');
+
+    const consultar = (ticket) =>
+      fetch(`${API_URL}/cola/estado?ticket=${ticket}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((d) => setCola({ ...d, ticket }))
+        .catch(() => {
+          localStorage.removeItem('cola_ticket');
+          tomarTurno();
+        });
+
+    const tomarTurno = () =>
+      fetch(`${API_URL}/cola/entrar`, { method: 'POST' })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.salaEsperaActiva === false) { setCola({ salaEsperaActiva: false, tuTurno: true }); return; }
+          localStorage.setItem('cola_ticket', d.ticket);
+          setCola({ ...d, tuTurno: false, posicion: null, personasAdelante: null });
+        });
+
+    if (ticketGuardado) consultar(ticketGuardado);
+    else tomarTurno();
+  }, [estado, cola]);
+
+  // Mientras no le toque su turno, vuelve a preguntar cada pocos segundos
+  useEffect(() => {
+    if (!cola || cola.salaEsperaActiva === false || cola.tuTurno) return;
+    const t = setInterval(() => {
+      fetch(`${API_URL}/cola/estado?ticket=${cola.ticket}`)
+        .then((r) => (r.ok ? r.json() : Promise.reject()))
+        .then((d) => setCola({ ...d, ticket: cola.ticket }))
+        .catch(() => {}); // si falla una consulta, se reintenta sola en el próximo ciclo
+    }, 3000);
+    return () => clearInterval(t);
+  }, [cola]);
 
   // Cargar horarios cuando cambia la categoría
   useEffect(() => {
@@ -242,6 +292,7 @@ export default function App() {
           mensualidad_total: totalMensualidad,
           fecha: diaCitaSel,
           cupo_cita_id: horaCitaSel,
+          ticket: cola?.ticket ?? null,
         }),
       });
       const dataRegistro = await resRegistro.json();
@@ -255,6 +306,25 @@ export default function App() {
       setEnviando(false);
     }
   };
+
+  if (estado && estado.estado === 'agotado') {
+    return (
+      <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
+        <div className="w-full max-w-xl text-center pt-10">
+          <div className="w-14 h-14 rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mx-auto mb-5">
+            <Clock size={26} />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Ya no hay cupo disponible</h1>
+          <p className="text-sm text-stone-600 mb-2">
+            Se agotaron los horarios de actividad o las citas de atención disponibles.
+          </p>
+          <p className="text-xs text-stone-500">
+            Gracias por tu interés. Consulta en el deportivo la próxima fecha de apertura.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (estado && estado.estado === 'cerrado') {
     return (
@@ -292,6 +362,39 @@ export default function App() {
           </div>
           <p className="text-xs text-stone-500 mt-4">
             No necesitas recargar la página: se abrirá sola cuando llegue la hora.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Todavía no le toca su turno en la fila
+  if (cola && cola.salaEsperaActiva !== false && !cola.tuTurno) {
+    return (
+      <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
+        <div className="w-full max-w-xl text-center pt-10">
+          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-5">
+            <Users size={26} />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Estás en la fila</h1>
+          <p className="text-sm text-stone-600 mb-6">
+            Hay mucha gente conectada a la vez. Te iremos dejando pasar en grupos, en el orden en que llegaste.
+          </p>
+          <div className="rounded-2xl border border-stone-200 bg-white p-5">
+            <p className="text-xs text-stone-500 mb-1">Tu posición</p>
+            <p className="text-3xl font-bold text-emerald-700 tracking-wide">
+              {cola.posicion ?? "…"}
+            </p>
+            {cola.personasAdelante !== null && (
+              <p className="text-xs text-stone-500 mt-2">
+                {cola.personasAdelante > 0
+                  ? `${cola.personasAdelante} ${cola.personasAdelante === 1 ? "persona" : "personas"} delante de ti`
+                  : "Ya casi es tu turno"}
+              </p>
+            )}
+          </div>
+          <p className="text-xs text-stone-500 mt-4 flex items-center justify-center gap-1.5">
+            <Loader2 size={12} className="animate-spin" /> No cierres ni recargues la página: te vamos a pasar automáticamente.
           </p>
         </div>
       </div>
@@ -588,7 +691,9 @@ export default function App() {
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
-            <p className="text-sm text-stone-600 mb-1">Guarde estos datos (puede tomar una captura de pantalla), los necesitará el día de su cita además de la documentación correspondiente y llegar 15 minutos previos a su cita para sacar su certificado médico</p>
+            <p className="text-sm text-stone-600 mb-1">Guarde estos datos (puede tomar una captura de pantalla), 
+              los necesitará el día de su cita además de la documentación correspondiente. Llegar 20 minutos previos a su cita para sacar su certificado médico,
+              si previamente ya tramitó su certificado médico llegar 5 minutos antes de la hora de su cita</p>
             <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">

@@ -2,7 +2,9 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const db = require('../db/db');
-const { esDiaDeCitaPermitido, estadoInscripciones } = require('../config');
+const { esDiaDeCitaPermitido, SALA_ESPERA_ACTIVA } = require('../config');
+const { estadoCompleto } = require('../disponibilidad');
+const { yaEsSuTurno } = require('../sala-espera');
 
 // Patrón oficial de la CURP: 4 letras, 6 dígitos de fecha, sexo (H/M),
 // 2 letras de entidad, 3 consonantes, 1 alfanumérico diferenciador, 1 dígito verificador
@@ -37,16 +39,34 @@ function generarFolio(curp) {
 
 // Crea el registro (folio + horarios) Y la cita en una sola operación atómica:
 // si cualquier parte falla, no queda nada a medias (ni folio huérfano sin cita).
-router.post('/', limitarIntentos, (req, res) => {
-  // Aunque alguien se salte el frontend, el servidor no registra fuera de la ventana
-  const estadoInsc = estadoInscripciones();
+router.post('/', (req, res, next) => {
+  // TEMPORAL: confirma en los logs de Railway que cada persona se ve con su
+  // propia IP y no una compartida. Quítalo cuando ya lo hayas verificado.
+  console.log('[verificación trust proxy] IP detectada para este registro:', req.ip);
+  next();
+}, limitarIntentos, (req, res) => {
+  // Aunque alguien se salte el frontend, el servidor no registra fuera de la
+  // ventana ni cuando ya se agotó el cupo de horarios o de citas
+  const estadoInsc = estadoCompleto();
   if (estadoInsc !== 'abierto') {
-    return res.status(403).json({
-      error: estadoInsc === 'antes' ? 'Las inscripciones aún no están abiertas' : 'Las inscripciones ya cerraron',
-    });
+    const mensajes = {
+      antes: 'Las inscripciones aún no están abiertas',
+      cerrado: 'Las inscripciones ya cerraron',
+      agotado: 'Ya no hay cupo disponible (de horarios o de citas)',
+    };
+    return res.status(403).json({ error: mensajes[estadoInsc] || 'Las inscripciones no están disponibles' });
   }
 
-  const { curp, horarios, mensualidad_total, fecha, cupo_cita_id } = req.body;
+  const { curp, horarios, mensualidad_total, fecha, cupo_cita_id, ticket } = req.body;
+
+  // Aunque alguien se salte la pantalla de espera, el servidor exige que ya
+  // le haya tocado su turno antes de dejarlo registrar.
+  if (SALA_ESPERA_ACTIVA) {
+    const textoTicket = String(ticket || '');
+    if (!/^[a-f0-9]{48}$/.test(textoTicket) || !yaEsSuTurno(textoTicket)) {
+      return res.status(403).json({ error: 'Todavía no es tu turno en la fila' });
+    }
+  }
 
   if (!curp || !horarios || horarios.length === 0 || !fecha || !cupo_cita_id) {
     return res.status(400).json({ error: 'Faltan datos obligatorios' });

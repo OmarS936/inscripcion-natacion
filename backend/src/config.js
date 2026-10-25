@@ -5,7 +5,8 @@
 // se vayan definiendo — formato 'YYYY-MM-DD'.
 const FECHAS_CITA_PERMITIDAS = [
    //'2026-09-28',
-   '2026-09-29',
+   '2026-10-26',
+   '2026-10-27',
    //'2026-08-25',
 ];
 
@@ -17,8 +18,8 @@ const FECHAS_CITA_PERMITIDAS = [
 // (el cierre se pone a las 00:00 del día 6, así el día 5 se cuenta completo):
 //   APERTURA_INSCRIPCIONES = '2026-10-01T00:00:00-06:00'
 //   CIERRE_INSCRIPCIONES   = '2026-10-06T00:00:00-06:00'
-const APERTURA_INSCRIPCIONES = null;
-const CIERRE_INSCRIPCIONES = '2026-09-28T09:33:00-06:00';
+const APERTURA_INSCRIPCIONES = '2026-10-26T00:00:00-06:00';
+const CIERRE_INSCRIPCIONES = '2026-10-26T14:00:00-06:00'; // ya está cerrado; cambia esto para la próxima apertura
 
 // Avisa en el log (sin tirar el servidor) si alguna fecha quedó mal escrita
 function validarVentana() {
@@ -42,6 +43,13 @@ function inscripcionesAbiertas() {
   return estadoInscripciones() === 'abierto';
 }
 
+// Sala de espera al abrir inscripciones: deja pasar a la gente en grupos,
+// en vez de que todos compitan al mismo tiempo por las citas.
+// Pon SALA_ESPERA_ACTIVA en false para desactivarla (todos entran directo).
+const SALA_ESPERA_ACTIVA = true;
+const SALA_ESPERA_PERSONAS_POR_GRUPO = 1;   // cuántas personas se dejan pasar cada vez
+const SALA_ESPERA_INTERVALO_MS = 2000000;       // cada cuántos milisegundos pasa el siguiente grupo
+
 function esDiaDeCitaPermitido(fechaStr) {
   return FECHAS_CITA_PERMITIDAS.includes(fechaStr);
 }
@@ -53,4 +61,7 @@ module.exports = {
   CIERRE_INSCRIPCIONES,
   estadoInscripciones,
   inscripcionesAbiertas,
+  SALA_ESPERA_ACTIVA,
+  SALA_ESPERA_PERSONAS_POR_GRUPO,
+  SALA_ESPERA_INTERVALO_MS,
 };
