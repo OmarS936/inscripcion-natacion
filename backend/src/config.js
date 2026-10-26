@@ -18,7 +18,7 @@ const FECHAS_CITA_PERMITIDAS = [
 // (el cierre se pone a las 00:00 del día 6, así el día 5 se cuenta completo):
 //   APERTURA_INSCRIPCIONES = '2026-10-01T00:00:00-06:00'
 //   CIERRE_INSCRIPCIONES   = '2026-10-06T00:00:00-06:00'
-const APERTURA_INSCRIPCIONES = '2026-10-25T19:25:00-06:00';
+const APERTURA_INSCRIPCIONES = '2026-10-26T00:00:00-06:00';
 const CIERRE_INSCRIPCIONES = '2026-10-26T14:00:00-06:00'; // ya está cerrado; cambia esto para la próxima apertura
 
 // Avisa en el log (sin tirar el servidor) si alguna fecha quedó mal escrita
