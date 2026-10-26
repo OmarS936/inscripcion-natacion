@@ -5,6 +5,7 @@ const db = require('../db/db');
 const { esDiaDeCitaPermitido, SALA_ESPERA_ACTIVA } = require('../config');
 const { estadoCompleto } = require('../disponibilidad');
 const { yaEsSuTurno } = require('../sala-espera');
+const { franjaYaPaso } = require('../franjas');
 
 // Patrón oficial de la CURP: 4 letras, 6 dígitos de fecha, sexo (H/M),
 // 2 letras de entidad, 3 consonantes, 1 alfanumérico diferenciador, 1 dígito verificador
@@ -83,6 +84,15 @@ router.post('/', (req, res, next) => {
 
   try {
     db.exec('BEGIN');
+
+    // La franja de cita debe existir y no haber empezado ya
+    const franja = db.prepare('SELECT hora_inicio FROM cupo_cita WHERE id = ?').get(cupo_cita_id);
+    if (!franja) {
+      throw new Error('La franja de cita elegida no es válida');
+    }
+    if (franjaYaPaso(fecha, franja.hora_inicio)) {
+      throw new Error('Esa franja de cita ya pasó. Elige otra, por favor.');
+    }
 
     // CURP duplicada
     const yaExiste = db.prepare('SELECT 1 FROM registro WHERE curp = ?').get(curpNormalizada);

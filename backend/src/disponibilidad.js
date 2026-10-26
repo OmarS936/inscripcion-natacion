@@ -6,6 +6,7 @@
 // terminar por falta del otro recurso.
 const db = require('./db/db');
 const { estadoInscripciones, FECHAS_CITA_PERMITIDAS } = require('./config');
+const { ahoraCDMX } = require('./franjas');
 
 function hayHorariosDisponibles() {
   const fila = db.prepare(`
@@ -20,17 +21,20 @@ function hayHorariosDisponibles() {
 }
 
 function hayCitasDisponibles() {
-  const hoy = new Date().toISOString().slice(0, 10);
+  // Hora de México, no UTC; y solo cuentan franjas que todavía no empiezan
+  const ahora = ahoraCDMX().slice(0, 16);
+  const hoy = ahora.slice(0, 10);
   const fechasFuturas = FECHAS_CITA_PERMITIDAS.filter((f) => f >= hoy);
   for (const fecha of fechasFuturas) {
     const fila = db.prepare(`
       SELECT EXISTS(
         SELECT 1 FROM cupo_cita cc
         LEFT JOIN cita c ON c.cupo_cita_id = cc.id AND c.fecha = ? AND c.estatus != 'cancelada'
+        WHERE (? || ' ' || cc.hora_inicio) > ?
         GROUP BY cc.id
         HAVING cc.cupo_maximo - COUNT(c.id) > 0
       ) AS hay
-    `).get(fecha);
+    `).get(fecha, fecha, ahora);
     if (fila.hay) return true;
   }
   return false;

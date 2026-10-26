@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/db');
 const { FECHAS_CITA_PERMITIDAS, esDiaDeCitaPermitido } = require('../config');
+const { fechaHoyCDMX, franjaYaPaso } = require('../franjas');
 
 // Devuelve las fechas de cita configuradas que todavía no han pasado
 router.get('/fechas', (req, res) => {
-  const hoy = new Date().toISOString().slice(0, 10);
+  const hoy = fechaHoyCDMX();
   const fechasFuturas = FECHAS_CITA_PERMITIDAS.filter((f) => f >= hoy).sort();
   res.json(fechasFuturas);
 });
@@ -26,7 +27,8 @@ router.get('/disponibilidad', (req, res) => {
     GROUP BY cc.id
     ORDER BY cc.hora_inicio
   `);
-  res.json(stmt.all(fecha));
+  // Las franjas que ya empezaron no se ofrecen
+  res.json(stmt.all(fecha).filter((f) => !franjaYaPaso(fecha, f.hora_inicio)));
 });
 
 module.exports = router;

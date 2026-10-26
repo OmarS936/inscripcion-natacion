@@ -310,7 +310,7 @@ export default function App() {
   if (estado && estado.estado === 'agotado') {
     return (
       <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
-        <div className="w-full max-w-xl text-center pt-10">
+        <div className="w-full max-w-xl text-center pt-10"><img src="/logo.png" alt="Centro Acuático" className="h-16 mx-auto mb-6" />
           <div className="w-14 h-14 rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mx-auto mb-5">
             <Clock size={26} />
           </div>
@@ -329,7 +329,7 @@ export default function App() {
   if (estado && estado.estado === 'cerrado') {
     return (
       <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
-        <div className="w-full max-w-xl text-center pt-10">
+        <div className="w-full max-w-xl text-center pt-10"><img src="/logo.png" alt="Centro Acuático" className="h-16 mx-auto mb-6" />
           <div className="w-14 h-14 rounded-full bg-stone-100 text-stone-500 flex items-center justify-center mx-auto mb-5">
             <Clock size={26} />
           </div>
@@ -348,8 +348,8 @@ export default function App() {
   if (estado && estado.estado === 'antes') {
     return (
       <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
-        <div className="w-full max-w-xl text-center pt-10">
-          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-5">
+        <div className="w-full max-w-xl text-center pt-10"><img src="/logo.png" alt="Centro Acuático" className="h-16 mx-auto mb-6" />
+          <div className="w-14 h-14 rounded-full bg-sky-50 text-sky-700 flex items-center justify-center mx-auto mb-5">
             <Clock size={26} />
           </div>
           <h1 className="text-2xl font-bold mb-2">Las inscripciones aún no están abiertas</h1>
@@ -358,7 +358,7 @@ export default function App() {
           </p>
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
             <p className="text-xs text-stone-500 mb-1">Faltan</p>
-            <p className="text-3xl font-bold text-emerald-700 tracking-wide">{formatearRestante(restanteMs)}</p>
+            <p className="text-3xl font-bold text-sky-700 tracking-wide">{formatearRestante(restanteMs)}</p>
           </div>
           <p className="text-xs text-stone-500 mt-4">
             No necesitas recargar la página: se abrirá sola cuando llegue la hora.
@@ -372,8 +372,8 @@ export default function App() {
   if (cola && cola.salaEsperaActiva !== false && !cola.tuTurno) {
     return (
       <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
-        <div className="w-full max-w-xl text-center pt-10">
-          <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-5">
+        <div className="w-full max-w-xl text-center pt-10"><img src="/logo.png" alt="Centro Acuático" className="h-16 mx-auto mb-6" />
+          <div className="w-14 h-14 rounded-full bg-sky-50 text-sky-700 flex items-center justify-center mx-auto mb-5">
             <Users size={26} />
           </div>
           <h1 className="text-2xl font-bold mb-2">Estás en la fila</h1>
@@ -382,7 +382,7 @@ export default function App() {
           </p>
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
             <p className="text-xs text-stone-500 mb-1">Tu posición</p>
-            <p className="text-3xl font-bold text-emerald-700 tracking-wide">
+            <p className="text-3xl font-bold text-sky-700 tracking-wide">
               {cola.posicion ?? "…"}
             </p>
             {cola.personasAdelante !== null && (
@@ -404,34 +404,37 @@ export default function App() {
   return (
     <div className="w-full min-h-screen bg-stone-50 text-stone-900 font-sans flex justify-center items-start py-10 px-4">
       <div className="w-full max-w-xl">
+      <img src="/logo.png" alt="Centro Acuático" className="h-14 mb-5" />
         {/* Progreso */}
         <div className="mb-8">
-          <p className="text-xs tracking-widest uppercase text-emerald-700 font-semibold mb-2">
+          <p className="text-xs tracking-widest uppercase text-sky-700 font-semibold mb-2">
             Nueva inscripción
           </p>
           <div className="flex items-center gap-2">
             {[1, 2, 3].map((n) => (
-              <div key={n} className={`h-1.5 rounded-full flex-1 transition-colors ${n <= paso ? "bg-emerald-700" : "bg-stone-200"}`} />
+              <div key={n} className={`h-1.5 rounded-full flex-1 transition-colors ${n <= paso ? "bg-sky-700" : "bg-stone-200"}`} />
             ))}
           </div>
           <div className="flex justify-between mt-2 text-xs text-stone-500">
-            <span className={paso === 1 ? "text-emerald-700 font-semibold" : ""}>1. Horarios y días</span>
-            <span className={paso === 2 ? "text-emerald-700 font-semibold" : ""}>2. Cita de atención</span>
-            <span className={paso === 3 ? "text-emerald-700 font-semibold" : ""}>3. Confirmación</span>
+            <span className={paso === 1 ? "text-sky-700 font-semibold" : ""}>1. Horarios y días</span>
+            <span className={paso === 2 ? "text-sky-700 font-semibold" : ""}>2. Cita de atención</span>
+            <span className={paso === 3 ? "text-sky-700 font-semibold" : ""}>3. Confirmación</span>
           </div>
         </div>
 
+        {/*    
         {estado && estado.estado === 'abierto' && estado.cierre && (
           <p className="text-xs text-stone-500 mb-5 -mt-4">
             Las inscripciones cierran el {formatearFechaHora(estado.cierre)}.
           </p>
         )}
+        */}  
 
         {/* PASO 1 */}
         {paso === 1 && (
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
+              <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center text-sky-700">
                 <Waves size={20} />
               </div>
               <h1 className="text-2xl font-bold">Natación</h1>
@@ -443,7 +446,7 @@ export default function App() {
             {bloques.length > 0 && (
               <div className="space-y-2 mb-5">
                 {bloques.map((b, i) => (
-                  <div key={i} className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                  <div key={i} className="flex items-center justify-between rounded-xl border border-sky-200 bg-sky-50 px-4 py-3">
                     <div>
                       <p className="text-sm font-semibold">{b.horaInicio}</p>
                       <p className="text-xs text-stone-600">
@@ -465,7 +468,7 @@ export default function App() {
                     <button
                       key={c.id}
                       onClick={() => { setCategoria(c.id); setFilaSel(null); setDiasSel([]); }}
-                      className={`flex-1 rounded-xl border px-3 py-2.5 text-left transition-colors ${categoria === c.id ? "border-emerald-700 bg-emerald-50" : "border-stone-200 bg-white hover:border-emerald-400"}`}
+                      className={`flex-1 rounded-xl border px-3 py-2.5 text-left transition-colors ${categoria === c.id ? "border-sky-700 bg-sky-50" : "border-stone-200 bg-white hover:border-sky-400"}`}
                     >
                       <p className="text-sm font-semibold leading-tight">{c.label}</p>
                       <p className="text-xs text-stone-500 leading-tight">{c.detalle}</p>
@@ -474,7 +477,7 @@ export default function App() {
                 </div>
 
                 <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                  <Clock size={16} className="text-emerald-700" /> Elija un horario
+                  <Clock size={16} className="text-sky-700" /> Elija un horario
                 </p>
 
                 {cargandoHorarios && (
@@ -498,7 +501,7 @@ export default function App() {
                         key={hora}
                         disabled={yaUsada}
                         onClick={() => elegirFila(hora)}
-                        className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm bg-white transition-colors ${yaUsada ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionada ? "border-emerald-700 bg-emerald-50" : "border-stone-200 hover:border-emerald-400"}`}
+                        className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm bg-white transition-colors ${yaUsada ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionada ? "border-sky-700 bg-sky-50" : "border-stone-200 hover:border-sky-400"}`}
                       >
                         <span className="font-medium">{hora}</span>
                         <span className="text-xs text-stone-500">
@@ -528,10 +531,10 @@ export default function App() {
                         key={entrada.id}
                         disabled={sinCupo}
                         onClick={() => toggleDia(entrada)}
-                        className={`rounded-xl border px-2 py-2.5 text-xs font-medium transition-colors flex flex-col items-center gap-1 ${sinCupo ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionado ? "border-emerald-700 bg-emerald-700 text-white" : "border-stone-200 hover:border-emerald-400"}`}
+                        className={`rounded-xl border px-2 py-2.5 text-xs font-medium transition-colors flex flex-col items-center gap-1 ${sinCupo ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionado ? "border-sky-700 bg-sky-700 text-white" : "border-stone-200 hover:border-sky-400"}`}
                       >
                         <span>{DIA_LABEL[entrada.dia_semana]}</span>
-                        <span className={`text-xs ${seleccionado ? "text-emerald-100" : "text-stone-400"}`}>
+                        <span className={`text-xs ${seleccionado ? "text-sky-100" : "text-stone-400"}`}>
                           {sinCupo ? "sin cupo" : `${entrada.cupo_disponible} lug.`}
                         </span>
                       </button>
@@ -544,7 +547,7 @@ export default function App() {
                     <span className="text-sm text-stone-600">
                       {diasSel.length} {diasSel.length === 1 ? "clase" : "clases"} · {money(previewMensualidad)}/mes
                     </span>
-                    <button onClick={agregarBloque} className="flex items-center gap-1 text-sm font-semibold text-emerald-700 border border-emerald-700 rounded-lg px-3 py-1.5 hover:bg-emerald-50">
+                    <button onClick={agregarBloque} className="flex items-center gap-1 text-sm font-semibold text-sky-700 border border-sky-700 rounded-lg px-3 py-1.5 hover:bg-sky-50">
                       <Plus size={14} /> Agregar este horario
                     </button>
                   </div>
@@ -570,7 +573,7 @@ export default function App() {
             <button
               onClick={irAPaso2}
               disabled={bloques.length === 0 && diasSel.length === 0}
-              className={`w-full mt-6 rounded-xl py-3.5 font-semibold text-sm transition-colors ${bloques.length > 0 || diasSel.length > 0 ? "bg-emerald-700 text-white hover:bg-emerald-800" : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
+              className={`w-full mt-6 rounded-xl py-3.5 font-semibold text-sm transition-colors ${bloques.length > 0 || diasSel.length > 0 ? "bg-sky-700 text-white hover:bg-sky-800" : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
             >
               Continuar a elegir cita
             </button>
@@ -580,7 +583,7 @@ export default function App() {
         {/* PASO 2 */}
         {paso === 2 && (
           <div>
-            <button onClick={() => setPaso(1)} className="flex items-center gap-1 text-xs text-stone-500 mb-4 hover:text-emerald-700">
+            <button onClick={() => setPaso(1)} className="flex items-center gap-1 text-xs text-stone-500 mb-4 hover:text-sky-700">
               <ArrowLeft size={14} /> Cambiar horarios o días
             </button>
 
@@ -594,7 +597,7 @@ export default function App() {
                   Natación · {b.horaInicio} · {b.dias.map((d) => DIA_LABEL[d.dia_semana]).join(", ")}
                 </p>
               ))}
-              <p className="text-sm text-emerald-700 font-bold pt-1">{money(totalMensualidad)}/mes</p>
+              <p className="text-sm text-sky-700 font-bold pt-1">{money(totalMensualidad)}/mes</p>
             </div>
 
             <div className="mb-5">
@@ -609,7 +612,7 @@ export default function App() {
                 }}
                 placeholder="Ej. GOMJ900101HDFNRS05"
                 maxLength={18}
-                className={`w-full rounded-xl border px-4 py-3 text-sm uppercase tracking-wide focus:outline-none ${errorCurp ? "border-red-400 bg-red-50" : "border-stone-200 bg-white focus:border-emerald-700"}`}
+                className={`w-full rounded-xl border px-4 py-3 text-sm uppercase tracking-wide focus:outline-none ${errorCurp ? "border-red-400 bg-red-50" : "border-stone-200 bg-white focus:border-sky-700"}`}
               />
               <p className="text-xs text-stone-500 mt-1">Escriba la CURP del alumno que se inscribirá, se usará para generar su folio de inscripción.</p>
               {errorCurp && <p className="text-xs text-red-600 mt-1 font-medium">{errorCurp}</p>}
@@ -617,7 +620,7 @@ export default function App() {
 
             <div className="mb-5">
               <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                <CalendarDays size={16} className="text-emerald-700" /> Elija un día
+                <CalendarDays size={16} className="text-sky-700" /> Elija un día
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {cargandoDias ? (
@@ -633,7 +636,7 @@ export default function App() {
                     <button
                       key={d.fecha}
                       onClick={() => { setDiaCitaSel(d.fecha); setHoraCitaSel(null); }}
-                      className={`shrink-0 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${diaCitaSel === d.fecha ? "border-emerald-700 bg-emerald-50 text-emerald-700" : "border-stone-200 bg-white hover:border-emerald-400"}`}
+                      className={`shrink-0 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${diaCitaSel === d.fecha ? "border-sky-700 bg-sky-50 text-sky-700" : "border-stone-200 bg-white hover:border-sky-400"}`}
                     >
                       {d.label}
                     </button>
@@ -644,7 +647,7 @@ export default function App() {
 
             <div>
               <p className="text-sm font-semibold mb-2 flex items-center gap-1.5">
-                <Clock size={16} className="text-emerald-700" /> Horarios disponibles
+                <Clock size={16} className="text-sky-700" /> Horarios disponibles
               </p>
               {cargandoCitas ? (
                 <div className="flex items-center gap-2 text-sm text-stone-500 py-4">
@@ -660,10 +663,10 @@ export default function App() {
                         key={slot.id}
                         disabled={sinCupo}
                         onClick={() => setHoraCitaSel(slot.id)}
-                        className={`rounded-xl border py-2 text-sm font-medium transition-colors flex flex-col items-center gap-0.5 ${sinCupo ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionado ? "border-emerald-700 bg-emerald-700 text-white" : "border-stone-200 hover:border-emerald-400"}`}
+                        className={`rounded-xl border py-2 text-sm font-medium transition-colors flex flex-col items-center gap-0.5 ${sinCupo ? "opacity-40 cursor-not-allowed border-stone-100" : seleccionado ? "border-sky-700 bg-sky-700 text-white" : "border-stone-200 hover:border-sky-400"}`}
                       >
                         <span>{slot.hora_inicio}</span>
-                        <span className={`text-xs ${seleccionado ? "text-emerald-100" : "text-stone-400"}`}>
+                        <span className={`text-xs ${seleccionado ? "text-sky-100" : "text-stone-400"}`}>
                           {sinCupo ? "sin cupo" : `${slot.cupo_disponible}/${slot.cupo_maximo}`}
                         </span>
                       </button>
@@ -676,7 +679,7 @@ export default function App() {
             <button
               onClick={confirmar}
               disabled={!horaCitaSel || enviando}
-              className={`w-full mt-8 rounded-xl py-3.5 font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${horaCitaSel && !enviando ? "bg-emerald-700 text-white hover:bg-emerald-800" : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
+              className={`w-full mt-8 rounded-xl py-3.5 font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${horaCitaSel && !enviando ? "bg-sky-700 text-white hover:bg-sky-800" : "bg-stone-200 text-stone-400 cursor-not-allowed"}`}
             >
               {enviando && <Loader2 size={16} className="animate-spin" />}
               {enviando ? "Guardando..." : "Confirmar cita"}
@@ -687,14 +690,14 @@ export default function App() {
         {/* PASO 3 */}
         {paso === 3 && (
           <div className="text-center pt-6">
-            <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto mb-5">
+            <div className="w-14 h-14 rounded-full bg-sky-50 text-sky-700 flex items-center justify-center mx-auto mb-5">
               <Check size={26} />
             </div>
             <h1 className="text-2xl font-bold mb-1">Todo listo</h1>
             <p className="text-sm text-stone-600 mb-1">Guarde estos datos (puede tomar una captura de pantalla), 
               los necesitará el día de su cita además de la documentación correspondiente. Llegar 20 minutos previos a su cita para sacar su certificado médico,
               si previamente ya tramitó su certificado médico llegar 5 minutos antes de la hora de su cita</p>
-            <p className="text-lg font-bold text-emerald-700 mb-6 tracking-wide">Folio: {folio}</p>
+            <p className="text-lg font-bold text-sky-700 mb-6 tracking-wide">Folio: {folio}</p>
 
             <div className="rounded-2xl border border-stone-200 bg-white p-5 text-left space-y-3">
               <div>
@@ -726,7 +729,7 @@ export default function App() {
                 setHoraCitaSel(null); setCurp(""); setFolio(null); setErrorCurp(null);
                 setRefrescoHorarios((n) => n + 1); // trae el cupo actualizado, sin recargar la página
               }}
-              className="mt-6 text-sm text-emerald-700 font-semibold underline underline-offset-2"
+              className="mt-6 text-sm text-sky-700 font-semibold underline underline-offset-2"
             >
               Empezar de nuevo
             </button>
